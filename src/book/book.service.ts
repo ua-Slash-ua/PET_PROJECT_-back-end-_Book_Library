@@ -41,4 +41,44 @@ export class BookService {
             data: result
         }
     }
+
+    async getBooksAuthor(): Promise<typeResponse> {
+        let result = await this.prisma.book.findMany({
+            select:{
+                author:true
+            }
+        })
+        if (!result || result.length === 0) {
+            return {
+                status: "error",
+                message: `Не вдалося отримати авторів!`,
+                data: result
+            }
+        }
+        return {
+            status: "success",
+            message: `Авторів отримано!`,
+            data: result
+        }
+    }
+
+    async getBooksGenre(): Promise<typeResponse> {
+        let result = await this.prisma.book.findMany({
+            select:{
+                genre:true
+            }
+        })
+        if (!result || result.length === 0) {
+            return {
+                status: "error",
+                message: `Не вдалося отримати жанри!`,
+                data: result
+            }
+        }
+        return {
+            status: "success",
+            message: `Жанри отримано!`,
+            data: result
+        }
+    }
 }

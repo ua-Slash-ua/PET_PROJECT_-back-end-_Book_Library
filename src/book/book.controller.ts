@@ -14,6 +14,14 @@ export class BookController {
   async getBooks():Promise<typeResponse>{
     return this.bookService.getBook();
   }
+  @Get('author')
+  async getBooksAuthor():Promise<typeResponse>{
+    return this.bookService.getBooksAuthor();
+  }
+  @Get('genre')
+  async getBooksGenre():Promise<typeResponse>{
+    return this.bookService.getBooksGenre();
+  }
 
   @Post('')
   async addBook(@Body() dataBook: typeBook):Promise<typeResponse> {
