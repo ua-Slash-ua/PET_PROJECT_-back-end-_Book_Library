@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {typeBook} from "../types/book.types";
 import {typeResponse} from "../types/response.types";
 import {PrismaService} from "../prisma/prisma.service";
+import * as stream from "node:stream";
 
 @Injectable()
 export class BookService {
@@ -55,10 +56,22 @@ export class BookService {
                 data: result
             }
         }
+        const authorCount: Record<string, number> = {};
+
+        result.forEach((element) => {
+            const author = element.author; // або інше поле, яке ти хочеш рахувати
+
+            if (author in authorCount) {
+                authorCount[author]++;
+            } else {
+                authorCount[author] = 1;
+            }
+        });
+
         return {
             status: "success",
             message: `Авторів отримано!`,
-            data: result
+            data: authorCount
         }
     }
 
@@ -75,10 +88,22 @@ export class BookService {
                 data: result
             }
         }
+        const genreCount: Record<string, number> = {};
+
+        result.forEach((element) => {
+            const genre = element.genre; // або інше поле, яке ти хочеш рахувати
+
+            if (genre in genreCount) {
+                genreCount[genre]++;
+            } else {
+                genreCount[genre] = 1;
+            }
+        });
+
         return {
             status: "success",
             message: `Жанри отримано!`,
-            data: result
+            data: genreCount
         }
     }
 }
