@@ -25,4 +25,20 @@ export class BookService {
             data: result
         }
     }
+
+    async getBook(): Promise<typeResponse> {
+        let result = await this.prisma.book.findMany()
+        if (!result || result.length === 0) {
+            return {
+                status: "error",
+                message: `Не вдалося отримати книги!`,
+                data: result
+            }
+        }
+        return {
+            status: "success",
+            message: `Книги отримано!`,
+            data: result
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import {Body, Controller, Post} from '@nestjs/common';
+import {Body, Controller, Get, Post} from '@nestjs/common';
 import { BookService } from './book.service';
 import {typeBook} from "../types/book.types";
 import {typeResponse} from "../types/response.types";
@@ -10,8 +10,15 @@ export class BookController {
   ) {
   }
 
+  @Get()
+  async getBooks():Promise<typeResponse>{
+    return this.bookService.getBook();
+  }
+
   @Post('')
   async addBook(@Body() dataBook: typeBook):Promise<typeResponse> {
     return this.bookService.addBook(dataBook);
   }
+
+
 }
