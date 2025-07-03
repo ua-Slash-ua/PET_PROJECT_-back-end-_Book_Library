@@ -28,18 +28,23 @@ export class BookService {
     }
 
     async getBook(filter: BookFilterDto): Promise<typeResponse> {
+        const cleanFilter = JSON.parse(JSON.stringify(filter));
         const where: Record<string, any> = {};
 
-        for (const [key, value] of Object.entries(filter)) {
+        for (const [key, value] of Object.entries(cleanFilter)) {
             if (Array.isArray(value) && value.length > 0) {
                 where[key] = { in: value };
+            } else if (typeof value === 'string' && value.trim() !== '') {
+                if (key === 'title') {
+                    where[key] = { contains: value, mode: 'insensitive' };
+                }
             }
         }
 
-        let result = await this.prisma.book.findMany({
-                where: where
-            }
-        )
+
+
+        const result = await this.prisma.book.findMany({ where });
+
 
         if (!result || result.length === 0) {
             return {

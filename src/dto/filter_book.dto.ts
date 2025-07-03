@@ -10,4 +10,9 @@ export class BookFilterDto {
     @IsArray()
     @IsString({ each: true })
     genre?: string[];
+
+    @IsOptional()
+    @IsString()
+    title?: string;
+
 }
