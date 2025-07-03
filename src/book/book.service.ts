@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {typeBook} from "../types/book.types";
 import {typeResponse} from "../types/response.types";
 import {PrismaService} from "../prisma/prisma.service";
-import * as stream from "node:stream";
+import {BookFilterDto} from "../dto/filter_book.dto";
 
 @Injectable()
 export class BookService {
@@ -27,8 +27,20 @@ export class BookService {
         }
     }
 
-    async getBook(): Promise<typeResponse> {
-        let result = await this.prisma.book.findMany()
+    async getBook(filter: BookFilterDto): Promise<typeResponse> {
+        const where: Record<string, any> = {};
+
+        for (const [key, value] of Object.entries(filter)) {
+            if (Array.isArray(value) && value.length > 0) {
+                where[key] = { in: value };
+            }
+        }
+
+        let result = await this.prisma.book.findMany({
+                where: where
+            }
+        )
+
         if (!result || result.length === 0) {
             return {
                 status: "error",
@@ -45,8 +57,8 @@ export class BookService {
 
     async getBooksAuthor(): Promise<typeResponse> {
         let result = await this.prisma.book.findMany({
-            select:{
-                author:true
+            select: {
+                author: true
             }
         })
         if (!result || result.length === 0) {
@@ -77,8 +89,8 @@ export class BookService {
 
     async getBooksGenre(): Promise<typeResponse> {
         let result = await this.prisma.book.findMany({
-            select:{
-                genre:true
+            select: {
+                genre: true
             }
         })
         if (!result || result.length === 0) {
