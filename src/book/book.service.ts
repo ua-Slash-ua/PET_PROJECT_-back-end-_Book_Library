@@ -28,10 +28,27 @@ export class BookService {
     }
 
     async getBook(filter: BookFilterDto): Promise<typeResponse> {
-        const cleanFilter = JSON.parse(JSON.stringify(filter));
-        const where: Record<string, any> = {};
+        let { per_page = 10, sort = 'asc', ...rawFilters } = filter;
+
+        per_page = Number(per_page) || 10;
+        sort = sort === 'desc' ? 'desc' : 'asc';
+
+        const cleanFilter = JSON.parse(JSON.stringify(rawFilters));
+        const normalizedFilter: Record<string, any> = {};
 
         for (const [key, value] of Object.entries(cleanFilter)) {
+            if (Array.isArray(value)) {
+                normalizedFilter[key] = value;
+            } else if (typeof value === 'string' && key !== 'title') {
+                normalizedFilter[key] = [value];
+            } else {
+                normalizedFilter[key] = value;
+            }
+        }
+
+        const where: Record<string, any> = {};
+
+        for (const [key, value] of Object.entries(normalizedFilter)) {
             if (Array.isArray(value) && value.length > 0) {
                 where[key] = { in: value };
             } else if (typeof value === 'string' && value.trim() !== '') {
@@ -42,8 +59,14 @@ export class BookService {
         }
 
 
+        const result = await this.prisma.book.findMany({
+            where,
+            take: per_page,
+            orderBy: {
+                createdAt: sort === 'asc' ? 'asc' : 'desc',
+            },
+        });
 
-        const result = await this.prisma.book.findMany({ where });
 
 
         if (!result || result.length === 0) {

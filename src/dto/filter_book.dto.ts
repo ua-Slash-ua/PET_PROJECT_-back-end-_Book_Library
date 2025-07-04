@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsString } from 'class-validator';
+import {IsOptional, IsArray, IsString, IsNumber} from 'class-validator';
 
 export class BookFilterDto {
     @IsOptional()
@@ -14,5 +14,13 @@ export class BookFilterDto {
     @IsOptional()
     @IsString()
     title?: string;
+
+    @IsOptional()
+    @IsNumber()
+    per_page?: number
+
+    @IsOptional()
+    @IsString()
+    sort?: string
 
 }
